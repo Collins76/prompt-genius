@@ -16,13 +16,16 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const trackLogin = async (userId: string, method: string, status: string) => {
-    await supabase.from("login_history").insert({
-      user_id: userId,
-      user_agent: navigator.userAgent,
-      method,
-      status,
-    });
+  const trackLogin = async (method: string, status: string) => {
+    try {
+      await fetch("/api/track-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ method, status }),
+      });
+    } catch {
+      // Non-critical — don't block login if tracking fails
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,7 +49,7 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      await trackLogin(data.user.id, "email", "success");
+      await trackLogin("email", "success");
       router.push("/dashboard");
     }
     setIsLoading(false);
@@ -79,11 +82,11 @@ export default function LoginPage() {
       }
 
       if (signUpData.user) {
-        await trackLogin(signUpData.user.id, "demo", "success");
+        await trackLogin("demo", "success");
         router.push("/dashboard");
       }
     } else if (data.user) {
-      await trackLogin(data.user.id, "demo", "success");
+      await trackLogin("demo", "success");
       router.push("/dashboard");
     }
     setIsDemoLoading(false);

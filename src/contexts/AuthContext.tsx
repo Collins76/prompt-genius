@@ -84,7 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("pg_user");
       localStorage.removeItem("pg_auth_token");
     }
-    window.location.href = "/login";
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    window.location.href = `${basePath}/login`;
   }, [supabase]);
 
   return (

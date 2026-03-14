@@ -18,10 +18,12 @@ export default function LoginPage() {
 
   const trackLogin = async (method: string, status: string) => {
     try {
-      await fetch("/api/track-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ method, status }),
+      await supabase.from("login_history").insert({
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        method,
+        status,
+        user_agent: navigator.userAgent,
+        ip_address: "client",
       });
     } catch {
       // Non-critical — don't block login if tracking fails

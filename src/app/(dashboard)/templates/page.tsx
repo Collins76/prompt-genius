@@ -49,7 +49,8 @@ export default function TemplatesPage() {
   const handleOptimize = () => {
     const filled = getFilledTemplate();
     sessionStorage.setItem("pg_optimize_input", filled);
-    window.location.href = "/optimizer";
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    window.location.href = `${basePath}/optimizer`;
   };
 
   return (

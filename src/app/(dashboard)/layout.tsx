@@ -1,19 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import ToastContainer from "@/components/ui/Toast";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const [ready, setReady] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Middleware handles redirects; just apply dark theme
     document.documentElement.classList.add("dark");
-    setReady(true);
-  }, []);
+    if (!isLoading) {
+      if (!user) {
+        router.replace("/login");
+      } else {
+        setReady(true);
+      }
+    }
+  }, [isLoading, user, router]);
 
   if (!ready || isLoading) {
     return (
